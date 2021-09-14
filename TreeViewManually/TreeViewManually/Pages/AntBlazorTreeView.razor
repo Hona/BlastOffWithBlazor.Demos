@@ -72,7 +72,7 @@
         {   
             Message = $"({this.GetType().Name}) Selection log (showing last 5)",
             Key = _notificationKey,
-            Description = GetSelectedMessages()
+            Description = GetSelectedMessages()            
         });
     }
 
@@ -92,7 +92,8 @@
             Description = GetSelectedMessages(),
             NotificationType = NotificationType.Info,
             Btn = btn,
-            Style = "width: 500px;"
+            Style = "width: 400px;",
+            Placement = NotificationPlacement.BottomRight,
         });        
     }
 
