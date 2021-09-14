@@ -1,0 +1,40 @@
+﻿@using TreeViewManually.Data
+
+<div>
+    @if (HasChildren)
+    {
+        <a href="#" @onclick="() => _isHidden = !_isHidden">
+            @(_isHidden ? "➤ " : "⮟ ")@Node.Value
+        </a>
+    }
+    else
+    {
+        <span>
+            @Node.Value
+        </span>
+    }
+
+    <div style="padding-left: 1rem">
+        @if (HasChildren)
+        {
+            <div style="@Style">
+                @foreach (var child in Node.Children)
+                {
+                    <NodeView Node="@child"/>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Node Node { get; set; }
+
+    private bool HasChildren => Node.Children != null && Node.Children.Any();
+
+    private bool _isHidden;
+
+    private string Style => _isHidden ? "display: none;" : "";
+
+}

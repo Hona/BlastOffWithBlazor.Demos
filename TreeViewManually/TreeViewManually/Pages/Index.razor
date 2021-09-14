@@ -1,0 +1,32 @@
+@page "/"
+@using TreeViewManually.Data
+
+<NodeView Node="ParentNode"/>
+
+
+@code
+{
+    public Node ParentNode { get; set; } = new()
+    {
+        Value = "asdf",
+        Children = new List<Node>()
+        {
+            new Node()
+            {
+                Value = "564",
+
+            },
+            new Node()
+            {
+                Value = "as64",
+                Children = new List<Node>()
+                {
+                    new Node
+                    {
+                        Value = "oooo"
+                    }
+                }
+            }
+        }
+    };
+}
