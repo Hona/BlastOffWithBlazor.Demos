@@ -1,9 +1,15 @@
 ﻿@page "/antblazor"
 @using AntDesign
 @using TreeViewManually.Data
+@inject NotificationService _notice
 
 <BadgeRibbon Text="AntBlazor" Placement="start">
-    <Card Bordered>Example of a TreeView.  <img src="logo.svg" style="width: 50px; margin-left: 50px;"/></Card>
+    <Card Bordered>
+        Example of a TreeView.  <img src="logo.svg" style="width: 50px; margin-left: 50px;"/>
+        <Button Type="@ButtonType.Primary" OnClick="@OnClick" Style="margin-left: 50px; ">
+            Show log
+        </Button>
+    </Card>
 </BadgeRibbon>
 
 <Tree DefaultExpandAll Draggable Multiple Checkable
@@ -20,9 +26,45 @@
 @code
 {
     public List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+    string _notificationKey = Guid.NewGuid().ToString();
+    int _selectItemsCount;
+    List<string> _selectedInfo = new();
 
     void CheckboxChanged(TreeEventArgs<Node> e)
 	{
-		Console.WriteLine($"SelectedNodeChanged: {e.Node.DataItem.Key} to {e.Node.Checked}");
+        _selectItemsCount += e.Node.Checked ? 1 : -1;
+        InvokeAsync(() => AddSelectionInfo($"React to change: {e.Node.DataItem.Value} to {e.Node.Checked}<hr/>"));
 	}
+
+    private async Task AddSelectionInfo(string message)
+    {
+        Console.WriteLine(message);
+        _selectedInfo.Insert(0, message);
+        if (_selectedInfo.Count > 5)
+        {
+            _selectedInfo.RemoveRange(5, _selectedInfo.Count - 5);
+        }
+        await _notice.Open(new NotificationConfig()
+        {   
+            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Key = _notificationKey,
+            Description = GetSelectedMessages()
+        });
+    }
+
+    private void OnClick()
+    {        
+        var task = _notice.Open(new NotificationConfig()
+        {
+            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Key = _notificationKey,
+            Duration = 0,
+            Description = GetSelectedMessages(),
+            NotificationType = NotificationType.Info,
+            Style = "width: 500px;"
+        });        
+    }
+
+    private string GetSelectedMessages() => String.Join(Environment.NewLine, _selectedInfo);
+
 }

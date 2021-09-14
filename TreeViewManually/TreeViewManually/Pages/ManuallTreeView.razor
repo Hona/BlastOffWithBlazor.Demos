@@ -1,18 +1,62 @@
 ﻿@page "/manual"
+@using AntDesign
 @using TreeViewManually.Data
+@inject NotificationService _notice
 
 <BadgeRibbon Text="Manual" Placement="start">
-    <Card Bordered>Example of a TreeView.</Card>
+    <Card Bordered>
+        Example of a TreeView. <img src="typing.gif" style="height: 50px; margin-left: 50px; border-radius: 5px;"/>
+        <Button Type="@ButtonType.Primary" OnClick="@OnClick" Style="margin-left: 50px; ">
+            Show log
+        </Button>
+    </Card>
 </BadgeRibbon>
 
 <NodeView Nodes="TreeView" OnItemSelected="@CheckboxChanged" AutoExpandParent="true"/>
 
 @code
 {
-    public List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+    List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+
+    string _notificationKey = Guid.NewGuid().ToString();
+    int _selectItemsCount;
+    List<string> _selectedInfo = new();
 
     private void CheckboxChanged((Node, bool) selection)
     {
-        Console.WriteLine($"SelectedNodeChanged: {selection.Item1?.Key} to {selection.Item2}");
+        _selectItemsCount += selection.Item2 ? 1 : -1;
+        InvokeAsync(() => AddSelectionInfo($"React to change: {selection.Item1?.Value} to {selection.Item2}<hr/>"));
     }
+
+
+    private async Task AddSelectionInfo(string message)
+    {
+        Console.WriteLine(message);
+        _selectedInfo.Insert(0, message);
+        if (_selectedInfo.Count > 5)
+        {
+            _selectedInfo.RemoveRange(5, _selectedInfo.Count - 5);
+        }
+        await _notice.Open(new NotificationConfig()
+        {   
+            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Key = _notificationKey,
+            Description = GetSelectedMessages()
+        });
+    }
+
+    private void OnClick()
+    {        
+        var task = _notice.Open(new NotificationConfig()
+        {
+            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Key = _notificationKey,
+            Duration = 0,
+            Description = GetSelectedMessages(),
+            NotificationType = NotificationType.Info,
+            Style = "width: 500px;"
+        });        
+    }
+
+    private string GetSelectedMessages() => String.Join(Environment.NewLine, _selectedInfo);
 }
