@@ -27,42 +27,84 @@
 {
     public List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
     string _notificationKey = Guid.NewGuid().ToString();
-    int _selectItemsCount;
     List<string> _selectedInfo = new();
 
     void CheckboxChanged(TreeEventArgs<Node> e)
-	{
-        _selectItemsCount += e.Node.Checked ? 1 : -1;
-        InvokeAsync(() => AddSelectionInfo($"React to change: {e.Node.DataItem.Value} to {e.Node.Checked}<hr/>"));
+	{        
+        var children = e.Node.GetParentChildDataItems().Where(x => x.Key == e.Node.DataItem.Key);
+        if (children.Count() == 0)
+        {            
+            InvokeAsync(() => AddSelectionInfo($"React to change: {e.Node.DataItem.Value} to {e.Node.Checked}<hr/>"));  
+        }
+        else
+        {
+            //_selectedInfo.Insert(0, $"React to change: {e.Node.DataItem.Value} to {e.Node.Checked}<hr/>");    
+            LogChildren(children,  e.Node.Checked);            
+            InvokeAsync(() => AddSelectionInfo());
+        }
 	}
 
-    private async Task AddSelectionInfo(string message)
+    private void LogChildren(IEnumerable<Node> nodes, bool isChecked)
     {
-        Console.WriteLine(message);
-        _selectedInfo.Insert(0, message);
+        if (nodes is not null)
+        {
+            foreach (var child in nodes)
+            {                
+                _selectedInfo.Insert(0, $"React to change: {child.Value} to {isChecked}<hr/>");
+                LogChildren(child.Children, isChecked);
+            }
+        }
+    }
+
+    private async Task AddSelectionInfo(string? message = null)
+    {
+        if (message is not null)
+        {
+            Console.WriteLine(message);
+            _selectedInfo.Insert(0, message);
+        }
         if (_selectedInfo.Count > 5)
         {
             _selectedInfo.RemoveRange(5, _selectedInfo.Count - 5);
         }
+
         await _notice.Open(new NotificationConfig()
         {   
-            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Message = $"({this.GetType().Name}) Selection log (showing last 5)",
             Key = _notificationKey,
             Description = GetSelectedMessages()
         });
     }
 
     private void OnClick()
-    {        
+    {   
+        
+        RenderFragment btn = 
+    @<Button Type="@ButtonType.Primary" OnClick="() => { InvokeAsync(ClearLog); }">
+                Clear
+            </Button>;
+
         var task = _notice.Open(new NotificationConfig()
         {
-            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Message = $"({this.GetType().Name}) Selection log (showing last 5)",
             Key = _notificationKey,
             Duration = 0,
             Description = GetSelectedMessages(),
             NotificationType = NotificationType.Info,
+            Btn = btn,
             Style = "width: 500px;"
         });        
+    }
+
+    private async Task ClearLog()
+    {
+        _selectedInfo.Clear();
+        await _notice.Open(new NotificationConfig()
+        {   
+            Message = $"({this.GetType().Name}) Selection log  (showing last 5)",
+            Key = _notificationKey,
+            Description = GetSelectedMessages()
+        });
     }
 
     private string GetSelectedMessages() => String.Join(Environment.NewLine, _selectedInfo);

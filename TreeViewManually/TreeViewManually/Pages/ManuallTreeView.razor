@@ -19,12 +19,10 @@
     List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
 
     string _notificationKey = Guid.NewGuid().ToString();
-    int _selectItemsCount;
     List<string> _selectedInfo = new();
 
     private void CheckboxChanged((Node, bool) selection)
     {
-        _selectItemsCount += selection.Item2 ? 1 : -1;
         InvokeAsync(() => AddSelectionInfo($"React to change: {selection.Item1?.Value} to {selection.Item2}<hr/>"));
     }
 
@@ -39,23 +37,40 @@
         }
         await _notice.Open(new NotificationConfig()
         {   
-            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Message = $"({this.GetType().Name}) Selection log (showing last 5)",
             Key = _notificationKey,
             Description = GetSelectedMessages()
         });
     }
-
+    
     private void OnClick()
-    {        
+    {   
+        
+        RenderFragment btn = @<Button Type="@ButtonType.Primary" OnClick="() => { InvokeAsync(ClearLog); }">
+                Clear
+            </Button>;
+
         var task = _notice.Open(new NotificationConfig()
         {
-            Message = $"({this.GetType().Name}) Total selected items: {_selectItemsCount} (showing last 5)",
+            Message = $"({this.GetType().Name}) Selection log (showing last 5)",
             Key = _notificationKey,
             Duration = 0,
             Description = GetSelectedMessages(),
             NotificationType = NotificationType.Info,
+            Btn = btn,
             Style = "width: 500px;"
         });        
+    }
+
+    private async Task ClearLog()
+    {
+        _selectedInfo.Clear();
+        await _notice.Open(new NotificationConfig()
+        {   
+            Message = $"({this.GetType().Name}) Selection log (showing last 5)",
+            Key = _notificationKey,
+            Description = GetSelectedMessages()
+        });
     }
 
     private string GetSelectedMessages() => String.Join(Environment.NewLine, _selectedInfo);

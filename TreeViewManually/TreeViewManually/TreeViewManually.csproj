@@ -6,6 +6,8 @@
 
     <ItemGroup>
       <PackageReference Include="AntDesign" Version="0.9.4" />
+      <PackageReference Include="FindRazorSourceFile.Server" Version="1.0.0-preview.3.0" />
+      <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
     </ItemGroup>
   
   
