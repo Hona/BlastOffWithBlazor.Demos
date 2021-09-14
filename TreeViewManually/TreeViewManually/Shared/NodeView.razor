@@ -1,40 +1,142 @@
 ﻿@using TreeViewManually.Data
 
 <div>
-    @if (HasChildren)
+    @foreach (var node in Nodes)
     {
-        <a href="#" @onclick="() => _isHidden = !_isHidden">
-            @(_isHidden ? "➤ " : "⮟ ")@Node.Value
-        </a>
-    }
-    else
-    {
-        <span>
-            @Node.Value
-        </span>
-    }
-
-    <div style="padding-left: 1rem">
-        @if (HasChildren)
-        {
-            <div style="@Style">
-                @foreach (var child in Node.Children)
-                {
-                    <NodeView Node="@child"/>
-                }
+        CreateSelectNode(node);
+        @if (HasChildren(node))
+        {   
+            CreateExpandableNode(node);
+            <div style="padding-left: 1rem;">
+                <input type="checkbox" checked="@_selectedNodes[node.Key]" @onchange="@((e) => SelectionChange(node))"/>
+                <a @onclick="() => ToggleExpanded(node)">
+                    @(_expandedNodes[node.Key] ? "➤ " : "⮟ "
+                    )@node.Value
+                </a>
+                <div style="padding-left: 1rem; @GetExpandedStyle(node)">
+                    <CascadingValue Value="node">
+                        <CascadingValue Value="this">
+                            <NodeView Nodes="@node.Children" OnItemSelected="@OnItemSelected" AutoExpandParent="@AutoExpandParent"/> 
+                        </CascadingValue>
+                    </CascadingValue>
+                </div>
             </div>
         }
-    </div>
+        else
+        {
+            <div style="padding-left: 1rem;">
+                <input type="checkbox" checked="@_selectedNodes[node.Key]" @onchange="@((e) => SelectionChange(node))"/>
+                @node.Value
+            </div>
+        }
+        
+    }
+
 </div>
 
 @code {
+    [CascadingParameter]
+    public NodeView ParentView { get; set; }
+
+    [CascadingParameter]
+    public Node ParentNode { get; set; }
+
     [Parameter]
-    public Node Node { get; set; }
+    public IEnumerable<Node> Nodes { get; set; }
 
-    private bool HasChildren => Node.Children != null && Node.Children.Any();
+    [Parameter]
+    public EventCallback<(Node, bool)> OnItemSelected { get; set; }
 
-    private bool _isHidden;
+    [Parameter]
+    public bool AutoExpandParent { get; set; } = false;
 
-    private string Style => _isHidden ? "display: none;" : "";
+    internal event EventHandler SelectClicked;
 
+    private bool HasChildren(Node node) => node.Children != null && node.Children.Any();
+
+    private Dictionary<string, bool> _selectedNodes = new();
+    private Dictionary<string, bool> _expandedNodes = new();
+
+    private void CreateSelectNode(Node node)
+    {
+        if (!_selectedNodes.ContainsKey(node.Key))
+        {
+            _selectedNodes.Add(node.Key, false);
+        }
+    }
+
+    private void CreateExpandableNode(Node node)
+    {
+        if (!_expandedNodes.ContainsKey(node.Key))
+        {
+            _expandedNodes.Add(node.Key, AutoExpandParent);
+        }
+    }
+
+    private void ToggleExpanded(Node node)
+    {
+        _expandedNodes[node.Key] = !_expandedNodes[node.Key];
+    }
+
+    private string GetExpandedStyle(Node node) => _expandedNodes[node.Key] ? "": "display: none;";
+
+    protected override void OnInitialized()
+    {
+        if (ParentView is not null)
+        {
+            ParentView.SelectClicked += ParentSelected;
+        }
+        base.OnInitialized();
+    }
+
+    private void ParentSelected(object sender, EventArgs args)
+    {
+        var tuple = (ValueTuple<Node, bool>)sender;
+        if (tuple.Item1.Key == ParentNode.Key)
+        {
+            foreach(var kv in _selectedNodes)
+            {
+                _selectedNodes[kv.Key] = tuple.Item2;
+                var currentNode = Nodes.Single(n => n.Key == kv.Key);
+                if (HasChildren(currentNode))
+                {
+                    SelectClicked.Invoke((currentNode, tuple.Item2), EventArgs.Empty);
+                }
+                if (OnItemSelected.HasDelegate)
+                {
+                    OnItemSelected.InvokeAsync((currentNode, tuple.Item2));
+                }
+            }            
+        }
+    }
+
+    private void SelectionChange(Node node)
+    {
+        _selectedNodes[node.Key] = !_selectedNodes[node.Key];
+        if (SelectClicked is not null)
+        {
+            SelectClicked.Invoke((node, _selectedNodes[node.Key]), EventArgs.Empty);
+        }
+        if (ParentView is not null)
+        {
+            ParentView.ChildSelectionChanged(ParentNode, _selectedNodes[node.Key], _selectedNodes.All(x => x.Value));
+        }
+        if (OnItemSelected.HasDelegate)
+        {
+            OnItemSelected.InvokeAsync((node, _selectedNodes[node.Key]));
+        }
+    }
+
+    internal void ChildSelectionChanged(Node node, bool isChecked, bool areAllChecked)
+    {
+        if (!isChecked || areAllChecked)
+        {
+            _selectedNodes[node.Key] = isChecked;
+        }
+        if (ParentView is not null)
+        {
+            ParentView.ChildSelectionChanged(ParentNode, _selectedNodes[node.Key], _selectedNodes.All(x => x.Value));
+        }
+        StateHasChanged();
+    }
 }

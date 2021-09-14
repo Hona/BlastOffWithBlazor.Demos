@@ -1,0 +1,28 @@
+﻿@page "/antblazor"
+@using AntDesign
+@using TreeViewManually.Data
+
+<BadgeRibbon Text="AntBlazor">
+    <Card Bordered><img src="logo.svg" width="50"/> Example of a TreeView.  </Card>
+</BadgeRibbon>
+
+<Tree DefaultExpandAll Draggable Multiple Checkable
+      ShowIcon DataSource="TreeView"
+      TitleExpression="x => x.DataItem.Value"
+      ChildrenExpression="x => x.DataItem.Children"
+      KeyExpression="x => x.DataItem.Key"
+      OnCheck="CheckboxChanged"
+      TItem="Node" 
+      AutoExpandParent="true"
+      OnDragEnd="e=> { }" >
+</Tree>
+
+@code
+{
+    public List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+
+    void CheckboxChanged(TreeEventArgs<Node> e)
+	{
+		Console.WriteLine($"SelectedNodeChanged: {e.Node.DataItem.Key} to {e.Node.Checked}");
+	}
+}

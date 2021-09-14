@@ -1,0 +1,18 @@
+﻿@page "/manual"
+@using TreeViewManually.Data
+
+<BadgeRibbon Text="Manual">
+    <Card Bordered>Example of a TreeView.</Card>
+</BadgeRibbon>
+
+<NodeView Nodes="TreeView" OnItemSelected="@CheckboxChanged" AutoExpandParent="true"/>
+
+@code
+{
+    public List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+
+    private void CheckboxChanged((Node, bool) selection)
+    {
+        Console.WriteLine($"SelectedNodeChanged: {selection.Item1?.Key} to {selection.Item2}");
+    }
+}

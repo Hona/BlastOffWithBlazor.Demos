@@ -1,32 +1,10 @@
 @page "/"
+@using AntDesign
 @using TreeViewManually.Data
 
-<NodeView Node="ParentNode"/>
+<ManuallTreeView/>
 
+<AntDesign.Divider/>
 
-@code
-{
-    public Node ParentNode { get; set; } = new()
-    {
-        Value = "asdf",
-        Children = new List<Node>()
-        {
-            new Node()
-            {
-                Value = "564",
+<AntBlazorTreeView/>
 
-            },
-            new Node()
-            {
-                Value = "as64",
-                Children = new List<Node>()
-                {
-                    new Node
-                    {
-                        Value = "oooo"
-                    }
-                }
-            }
-        }
-    };
-}
