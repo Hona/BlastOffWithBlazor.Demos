@@ -1,6 +1,6 @@
 ﻿@page "/antblazor"
 @using AntDesign
-@using TreeViewManually.Data
+@using TreeViewComparison.Data
 @inject NotificationService _notice
 
 <BadgeRibbon Text="AntBlazor" Placement="start">
@@ -25,7 +25,7 @@
 
 @code
 {
-    public List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+    public List<Node> TreeView { get; set; } = Data.TreeView.SampleData;
     string _notificationKey = Guid.NewGuid().ToString();
     List<string> _selectedInfo = new();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TreeViewManually.Data
+namespace TreeViewComparison.Data
 {
     public class Node
     {

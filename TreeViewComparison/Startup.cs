@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TreeViewComparison.Data;
 
-namespace TreeViewManually
+namespace TreeViewComparison
 {
     public class Startup
     {
@@ -22,7 +23,7 @@ namespace TreeViewManually
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            
+            services.AddSingleton<WeatherForecastService>();
             services.AddAntDesign();
         }
 
@@ -32,7 +33,6 @@ namespace TreeViewManually
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
                 app.UseBrowserLink();
                 app.UseFindRazorSourceFile();
             }

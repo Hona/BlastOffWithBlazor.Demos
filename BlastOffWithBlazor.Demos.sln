@@ -16,11 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1. AntBlazor Pro Template",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2. TreeViewComparison", "2. TreeViewComparison", "{4AF65F71-7820-4EEE-8953-F537142978AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreeViewComparison", "TreeViewComparison\TreeViewComparison.csproj", "{FB55841E-A321-4309-988C-1C36D68FE779}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. UpBlazor", "4. UpBlazor", "{7C205911-AE12-47F3-AAF6-4030A2DBA012}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. AntWeatherForecast", "3. AntWeatherForecast", "{A7484847-0015-4CA0-B3E8-C690DE930B42}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TreeViewComparison", "TreeViewComparison\TreeViewComparison.csproj", "{1A3C93AF-B23D-4142-9B91-2AC078276233}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,12 +30,12 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{5DB9A810-2621-4206-B303-2DA8CCE7A528} = {2DFF5E41-D6A1-4EE9-A094-62EBBD8EA4C7}
 		{B94FA166-C6BC-47F5-85CE-1231DC7AE87D} = {2DFF5E41-D6A1-4EE9-A094-62EBBD8EA4C7}
-		{FB55841E-A321-4309-988C-1C36D68FE779} = {4AF65F71-7820-4EEE-8953-F537142978AC}
+		{1A3C93AF-B23D-4142-9B91-2AC078276233} = {4AF65F71-7820-4EEE-8953-F537142978AC}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FB55841E-A321-4309-988C-1C36D68FE779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FB55841E-A321-4309-988C-1C36D68FE779}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FB55841E-A321-4309-988C-1C36D68FE779}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FB55841E-A321-4309-988C-1C36D68FE779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A3C93AF-B23D-4142-9B91-2AC078276233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A3C93AF-B23D-4142-9B91-2AC078276233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A3C93AF-B23D-4142-9B91-2AC078276233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A3C93AF-B23D-4142-9B91-2AC078276233}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

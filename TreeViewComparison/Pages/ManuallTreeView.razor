@@ -1,6 +1,6 @@
 ﻿@page "/manual"
 @using AntDesign
-@using TreeViewManually.Data
+@using TreeViewComparison.Data
 @inject NotificationService _notice
 
 <BadgeRibbon Text="Manual" Placement="start">
@@ -16,7 +16,7 @@
 
 @code
 {
-    List<Node> TreeView { get; set; } = TreeViewManually.Data.TreeView.SampleData;
+    List<Node> TreeView { get; set; } = Data.TreeView.SampleData;
 
     string _notificationKey = Guid.NewGuid().ToString();
     List<string> _selectedInfo = new();
