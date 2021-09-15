@@ -1,0 +1,46 @@
+﻿@page "/"
+@using AntBlazorWeatherForecast.Data
+
+@inject WeatherForecastService _weatherForecastService
+
+<PageContainer Title="Welcome">
+    <Card>
+        @if (_weatherForecasts == null)
+        {
+            <Spin />
+        }
+        else if (!_weatherForecasts.Any())
+        {
+            <Result Title="No forecasts for today!"/>
+        }
+        else
+        {
+            <Table TItem="WeatherForecast"
+                   DataSource="@_weatherForecasts"
+                   Total="@(_weatherForecasts.Count)"
+                   Context="tableContext">
+                <AntDesign.Column @bind-Field="@tableContext.Date" Format="yyyy-MM-dd" Sortable />
+                <AntDesign.Column @bind-Field="@tableContext.TemperatureC" Sortable />
+                <AntDesign.Column Title="Temp. (F)" Field="@tableContext.TemperatureF" />
+                <AntDesign.Column @bind-Field="@tableContext.Summary" Sortable />
+            </Table>
+        }
+    </Card>
+    <p style="text-align: center; margin-top: 24px;">
+        Want to add more pages? Please refer to
+        <a href="https://github.com/ant-design-blazor/ant-design-pro-blazor" target="_blank" rel="noopener noreferrer">
+            ant-design-pro-blazor project
+        </a>
+        .
+    </p>
+</PageContainer>
+
+@code
+{
+    private List<WeatherForecast> _weatherForecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _weatherForecasts = (await _weatherForecastService.GetForecastAsync(DateTime.Now)).ToList();
+    }
+}
