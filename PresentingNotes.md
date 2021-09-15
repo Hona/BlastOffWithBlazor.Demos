@@ -13,10 +13,10 @@
 
       * Most developers don't want to create a UI/UX story, this is a HUGE help.
       * [Create a new project from the dotnet new template](https://github.com/ant-design-blazor/ant-design-blazor#create-a-new-project-from-the-dotnet-new-template-)
+      * Showcase adding [Ctrl + Shift + F NuGet Package]()
 
 2. TreeViewComparison
    
-   * Demonstrate `Ctrl + Shift + F`... 😉 
    * Mention it took ~4 hours
 
 3. 
